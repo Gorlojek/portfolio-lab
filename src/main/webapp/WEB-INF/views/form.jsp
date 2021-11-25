@@ -82,8 +82,7 @@
                 <div class="form-group form-group--checkbox">
                     <label>
 
-
-                        <form:checkbox path="categories" cssClass="checkbox" value="${categories[counter.index]}" />
+                        <form:checkbox path="categories"  value="${categories[counter.index]}" />
                         <span class="checkbox"></span>
                         <span class="description">${categories[counter.index].name}</span >
                     </label>
@@ -103,7 +102,7 @@
                 <div class="form-group form-group--inline">
                     <label>
                         Liczba 60l worków:
-                        <form:input path="quantity"  step="1" min="1" />
+                        <form:input path="quantity"  step="1" min="1" value="1"  />
                     </label>
                 </div>
 

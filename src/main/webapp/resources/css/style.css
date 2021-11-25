@@ -464,9 +464,9 @@ h2:after {
   padding: 1em 1.666em;
   border: 1px solid #3c3c3c;
   text-align: center;
-  -webkit-transition: border-color 0.2s ease-in-out;
-  -o-transition: border-color 0.2s ease-in-out;
-  transition: border-color 0.2s ease-in-out;
+  -webkit-transition: border-color 0.2s ease;
+  -o-transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease;
   background: transparent;
   cursor: pointer;
 }
@@ -599,14 +599,13 @@ form .form-group--checkbox label {
 
 /* line 58, scss/modules/_forms.scss */
 form .form-group--checkbox input {
-  /*position: fixed;*/
+  position: fixed;
   opacity: 0;
-  visibility: visible;
-  display: inline-flex;
+  display: none;
 }
 
 /* line 64, scss/modules/_forms.scss */
-form .form-group--checkbox input:checked + .checkbox {
+form .form-group--checkbox input:checked ~ .checkbox {
   background-color: #f9c910;
 }
 

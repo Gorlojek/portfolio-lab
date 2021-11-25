@@ -99,11 +99,11 @@
             <li>
                 <div class="col">
                     <div class="title">Fundacja "${institutions[theCount.index].name}"</div>
-                    <div class="subtitle">${institutions[theCount.index].description}</div>
+                    <div class="subtitle">Cel i misja: ${institutions[theCount.index].description}</div>
                 </div>
-                <div class="col">
-                    <div class="title">Fundacja "${institutions[theCount.index+1].name}"</div>
-                    <div class="subtitle">Cel i misja: ${institutions[theCount.index+1].description}</div>
+                <div class="col" ${theCount.index+1 == institutions.size() ? 'style="visibility:hidden"' : ''}</div>
+                     <div class="title">Fundacja "${institutions[theCount.index+1].name}"</div>
+                     <div class="subtitle">Cel i misja: ${institutions[theCount.index+1].description}</div>
                 </div>
             </li>
 

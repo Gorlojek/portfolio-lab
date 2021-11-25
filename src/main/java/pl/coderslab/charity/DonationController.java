@@ -46,6 +46,7 @@ public class DonationController {
         Donation donation = (Donation) session.getAttribute("savedDonation");
 
         donationRepository.save(donation);
+        session.removeAttribute("savedDonation");
         return "redirect:/form-confirmation";
     }
 

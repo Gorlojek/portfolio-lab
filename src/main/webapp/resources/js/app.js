@@ -1,5 +1,19 @@
 document.addEventListener("DOMContentLoaded", function() {
-
+  // class MainPage{
+  //   constructor() {
+  //     hideLastInstitution()
+  //   }
+  // }
+  // new MainPage();
+  // function hideLastInstitution() {
+  //   const lastInstitutionElement = document.querySelectorAll(".title")[document.querySelectorAll(".title").length - 1].innerText.length;
+  //   const formElementDataStep = document.querySelectorAll(".title")[document.querySelectorAll(".title").length - 1].parentElement.parentElement.parentElement.parentElement.dataset.step
+  //
+  //   if (lastInstitutionElement != null && lastInstitutionElement == 11 && formElementDataStep==null) {
+  //     console.log("dodany styl visibility:hidden")
+  //     document.querySelectorAll(".title")[document.querySelectorAll(".title").length - 1].parentElement.style.visibility = "hidden";
+  //   }
+  // }
   /**
    * Form Select
    */
@@ -18,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     createElements() {
+
       // Input for value
       this.valueInput = document.createElement("input");
       this.valueInput.type = "text";
@@ -53,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
       this.dropdown.appendChild(this.ul);
       this.dropdown.appendChild(this.valueInput);
       this.$el.parentElement.appendChild(this.dropdown);
-
+      document.querySelector("input[name='quantity']").type = 'number'
     }
 
     addEvents() {
@@ -72,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
   document.querySelectorAll(".form-group--dropdown select").forEach(el => {
     new FormSelect(el);
   });
-  document.querySelector("input[name='quantity']").type = 'number';
+
 
   /**
    * Hide elements when clicked on document
@@ -107,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$prev = form.querySelectorAll(".prev-step");
       this.$step = form.querySelector(".form--steps-counter span");
       this.currentStep = 1;
-
+      localStorage.setItem("currentStep", this.currentStep);
       this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
       const $stepForms = form.querySelectorAll("form > div");
       this.slides = [...this.$stepInstructions, ...$stepForms];
@@ -115,30 +130,93 @@ document.addEventListener("DOMContentLoaded", function() {
       this.init();
     }
 
+
     /**
      * Init all methods
      */
     init() {
-      const currentDonation={
-        category:["dupa"]
 
-      };
       this.events();
-      this.updateForm(currentDonation);
+      this.updateForm();
+      // document.querySelectorAll("input[type='hidden']").forEach(function (e){
+      //   e.parentNode.removeChild(e);
+      //     }
+      // );
 
 
     }
+    validations(){
+      let valid = true;
+      const secondFormStep = document.querySelector('div[data-step="2"]');
+      const thirdFormStep = document.querySelector('div[data-step="3"]');
 
+
+      const categoryChbx = document.querySelectorAll("input[name='categories']:checked").length;
+      if (categoryChbx == 0){
+        alert("Musisz zaznaczyć conajmniej jedną kategorię!");
+        valid = false;
+
+      }
+      const quantityInput = document.querySelector("input[name='quantity']");
+      let quantityInputValue = Math.floor(quantityInput.value);
+      console.log(quantityInputValue)
+      if(quantityInputValue == 0&&secondFormStep.classList[0]=="active"){
+        quantityInput.style.borderColor = 'red';
+
+        alert("Liczba oddanych worków musi być większa od zera");
+        valid=false;
+      }
+      if(quantityInputValue >= 100&&secondFormStep.classList[0]=="active"){
+        console.log(quantityInput.value )
+        quantityInput.style.borderColor = 'red';
+
+        alert("Nie można oddać więcej niż 100 worków")
+        valid=false;
+      }
+      if((quantityInput.value == "" || isNaN(quantityInputValue))&&secondFormStep.classList[0]=="active" ){
+        quantityInput.style.borderColor = 'red';
+        alert("Podaj poprawną liczbę worków")
+        valid=false;
+      }
+      const institutionsRadioButtons = document.querySelectorAll("input[name='institution']:checked").length;
+      if (institutionsRadioButtons == 0&&thirdFormStep.classList[0]=="active"){
+        alert("Proszę wybrać instytucję");
+        valid = false;
+      }
+      return valid;
+        }
+    lastStepValidation() {
+      let valid = true;
+      console.log("sprawdzam ostatnią stronę")
+      const lastFormStep = document.querySelector('div[data-step="4"]');
+      const streetInput = document.querySelector("input[name='street']");
+      const cityInput = document.querySelector("input[name='city']");
+      const zipCodeInput = document.querySelector("input[name='zipCode']");
+      const phoneNumberInput = document.querySelector("input[name='phoneNumber']");
+      const dateInput = document.querySelector("input[name='pickUpDate']");
+      const hourInput = document.querySelector("input[name='pickUpTime']");
+      const textInputs = [streetInput,cityInput,zipCodeInput,phoneNumberInput];
+      if(streetInput.value=='' && lastFormStep.classList[0] == "active"){
+        alert("podaj poprawną datę");
+        valid = false;
+      }
+
+      return valid;
+    }
     /**
      * All events that are happening in form
      */
     events() {
-      // Next step
       this.$next.forEach(btn => {
         btn.addEventListener("click", e => {
           e.preventDefault();
-          this.currentStep++;
-          this.updateForm();
+          if(this.validations()){
+            this.currentStep++;
+            localStorage.setItem("currentStep",this.currentStep);
+            this.updateForm();
+          }
+
+
         });
       });
 
@@ -147,12 +225,21 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.addEventListener("click", e => {
           e.preventDefault();
           this.currentStep--;
+          localStorage.setItem("currentStep",this.currentStep);
           this.updateForm();
         });
       });
 
       // Form submit
-      this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
+
+        this.$form.querySelector("form").addEventListener("submit", e => {
+        if(!this.lastStepValidation()){
+          e.preventDefault();
+        }
+
+        });
+
+
     }
 
     /**
@@ -160,8 +247,10 @@ document.addEventListener("DOMContentLoaded", function() {
      * Show next or previous section etc.
      */
 
-    updateForm(currentDonation) {
-
+    updateForm() {
+      if(this.$step  == null ){
+        return;
+      }
       this.$step.innerText = this.currentStep;
 
       // TODO: Validation
@@ -177,15 +266,8 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 5;
       this.$step.parentElement.hidden = this.currentStep >= 5;
 
+
       // TODO: get data from inputs and show them in summary
-
-      const categoryChbx = document.querySelectorAll("input[name='category']");
-      categoryChbx.forEach(function (e){
-        if(e.checked){
-          console.log(currentDonation)
-        }
-
-      })
 
     }
 

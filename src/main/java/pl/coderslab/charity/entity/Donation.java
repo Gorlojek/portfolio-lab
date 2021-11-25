@@ -17,6 +17,7 @@ public class Donation {
     private long id;
     private int quantity;
     @ManyToMany
+    @JoinColumn(name="category_id")
     private List<Category> categories;
     @OneToOne
     @JoinColumn(name = "institution_id")
